@@ -7,6 +7,7 @@ import {
 } from "../config/ChatLogics";
 import { ChatState } from "../context/ChatProvider";
 import { motion } from "framer-motion";
+import FileMessage from "./FileMessage";
 
 const ScrollableChat = ({ messages }) => {
     const { user } = ChatState();
@@ -63,24 +64,29 @@ const ScrollableChat = ({ messages }) => {
                                 ) && <div className="w-10 mr-0"></div>}
 
                             <div
+                                className={`px-4 py-2 max-w-[75%] shadow-md text-[15px] leading-relaxed relative group
+                                    ${isMyMessage
+                                        ? "bg-chat-bubble-me text-white shadow-[0_4px_15px_rgba(8,145,178,0.3)]"
+                                        : "bg-chat-bubble-friend text-gray-200 border border-white/5 shadow-[0_4px_15px_rgba(0,0,0,0.2)]"}
+                                `}
                                 style={{
-                                    backgroundColor: isMyMessage ? "#6366f1" : "rgba(30, 41, 59, 0.8)", // Indigo-500 vs Slate-800/80
-                                    color: isMyMessage ? "white" : "#e2e8f0",
-                                    borderRadius: borderRadius,
-                                    padding: "10px 18px",
-                                    maxWidth: "75%",
-                                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-                                    fontSize: "15px",
-                                    lineHeight: "1.6",
-                                    backdropFilter: !isMyMessage ? "blur(8px)" : "none",
-                                    border: !isMyMessage ? "1px solid rgba(255, 255, 255, 0.05)" : "none",
+                                    borderRadius: borderRadius
                                 }}
-                                className={`${isMyMessage ? "bg-gradient-to-br from-indigo-500 to-blue-600" : ""}`}
                             >
-                                {m.content}
-                                <div className={`text-[10px] mt-1 text-right ${isMyMessage ? "text-indigo-200" : "text-slate-400"}`}>
-                                    {/* Timestamp placeholder - could use moment.js here */}
-                                    {/* {new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} */}
+                                {/* Display file attachment if exists */}
+                                {m.attachment && (
+                                    <FileMessage attachment={m.attachment} isSender={isMyMessage} />
+                                )}
+
+                                {/* Display text content if exists */}
+                                {m.content && (
+                                    <div className={m.attachment ? "mt-2" : ""}>
+                                        {m.content}
+                                    </div>
+                                )}
+
+                                <div className={`text-[10px] mt-1 text-right ${isMyMessage ? "text-cyan-100" : "text-gray-400"}`}>
+                                    {/* Timestamp placeholder */}
                                 </div>
                             </div>
                         </motion.div>

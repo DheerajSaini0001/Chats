@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChatState } from "../../context/ChatProvider";
 import axios from "axios";
+import ProfileModal from "./ProfileModal";
+import ThemeToggle from "../ThemeToggle";
 
 const SideDrawer = () => {
     const [search, setSearch] = useState("");
@@ -9,6 +11,7 @@ const SideDrawer = () => {
     const [loading, setLoading] = useState(false);
     const [loadingChat, setLoadingChat] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
 
     const { user, setSelectedChat, chats, setChats } = ChatState();
     const navigate = useNavigate();
@@ -62,11 +65,13 @@ const SideDrawer = () => {
         }
     };
 
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
     return (
         <>
             <div className="flex justify-between items-center w-full p-3 glass-header sticky top-0 z-10">
                 <button
-                    className="flex items-center px-4 py-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors duration-200 text-gray-200"
+                    className="flex items-center px-4 py-2 bg-white/10 dark:bg-white/5 rounded-full hover:bg-white/20 dark:hover:bg-white/10 transition-colors duration-200 text-gray-200"
                     onClick={() => setIsDrawerOpen(true)}
                 >
                     <i className="fas fa-search text-gray-400"></i>
@@ -77,10 +82,16 @@ const SideDrawer = () => {
                     Talk-A-Tive
                 </h2>
 
-                <div className="flex items-center space-x-4">
-                    <div className="relative group">
-                        <button className="flex items-center space-x-2 focus:outline-none">
-                            <div className="relative">
+                <div className="flex items-center space-x-2">
+                    {/* Theme Toggle */}
+                    <ThemeToggle />
+
+                    <div className="relative">
+                        <button
+                            className="flex items-center space-x-2 focus:outline-none"
+                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                        >
+                            <div className="relative ">
                                 <img
                                     src={user.pic}
                                     alt={user.name}
@@ -88,32 +99,48 @@ const SideDrawer = () => {
                                 />
                                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0f172a]"></div>
                             </div>
-                            <i className="fas fa-chevron-down text-gray-400 text-sm group-hover:text-gray-200 transition-colors"></i>
+                            <i className={`fas fa-chevron-down text-gray-400 text-sm transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}></i>
                         </button>
-                        <div className="absolute right-0 mt-2 w-48 bg-[#1e293b] rounded-xl shadow-xl py-2 z-20 hidden group-hover:block border border-gray-700 transform origin-top-right transition-all duration-200">
-                            <div className="px-4 py-2 border-b border-gray-700">
-                                <p className="text-sm font-semibold text-gray-200 truncate">{user.name}</p>
-                                <p className="text-xs text-gray-400 truncate">{user.email}</p>
-                            </div>
-                            <button className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5 w-full text-left transition-colors">
-                                My Profile
-                            </button>
-                            <button
-                                onClick={logoutHandler}
-                                className="block px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 w-full text-left transition-colors"
-                            >
-                                Logout
-                            </button>
-                        </div>
+
+                        {/* Dropdown Menu */}
+                        {isDropdownOpen && (
+                            <>
+                                <div
+                                    className="fixed inset-0 z-10"
+                                    onClick={() => setIsDropdownOpen(false)}
+                                ></div>
+                                <div className="absolute right-0 mt-2 w-48 bg-[#1e293b] rounded-xl shadow-xl py-2 z-20 border border-gray-700 transform origin-top-right transition-all duration-200 animate-in fade-in zoom-in-95">
+                                    <div className="px-4 py-2 border-b border-gray-700">
+                                        <p className="text-sm font-semibold text-gray-200 truncate">{user.name}</p>
+                                        <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            setIsProfileOpen(true);
+                                            setIsDropdownOpen(false);
+                                        }}
+                                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5 w-full text-left transition-colors"
+                                    >
+                                        My Profile
+                                    </button>
+                                    <button
+                                        onClick={logoutHandler}
+                                        className="block px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 w-full text-left transition-colors"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
 
             {/* Drawer */}
             {isDrawerOpen && (
-                <div className="fixed inset-0 z-50 flex">
+                <div className="fixed inset-0 z-[100] flex">
                     <div
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+                        className="fixed inset-0 bg-black/60 "
                         onClick={() => setIsDrawerOpen(false)}
                     ></div>
                     <div className="relative z-50 w-80 bg-[#0f172a] h-full shadow-2xl p-4 flex flex-col border-r border-gray-800">
@@ -164,6 +191,14 @@ const SideDrawer = () => {
                     </div>
                 </div>
             )}
+
+            {/* Profile Modal */}
+            <ProfileModal
+                isOpen={isProfileOpen}
+                onClose={() => setIsProfileOpen(false)}
+                user={user}
+                isOwnProfile={true}
+            />
         </>
     );
 };
