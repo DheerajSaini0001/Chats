@@ -22,18 +22,28 @@ const allMessages = asyncHandler(async (req, res) => {
 //@route           POST /api/message
 //@access          Protected
 const sendMessage = asyncHandler(async (req, res) => {
-    const { content, chatId } = req.body;
+    const { content, chatId, attachment } = req.body;
 
-    if (!content || !chatId) {
+    // Must have either content or attachment
+    if ((!content && !attachment) || !chatId) {
         console.log("Invalid data passed into request");
         return res.sendStatus(400);
     }
 
     var newMessage = {
         sender: req.user._id,
-        content: content,
         chat: chatId,
     };
+
+    // Add content if provided
+    if (content) {
+        newMessage.content = content;
+    }
+
+    // Add attachment if provided
+    if (attachment) {
+        newMessage.attachment = attachment;
+    }
 
     try {
         var message = await Message.create(newMessage);

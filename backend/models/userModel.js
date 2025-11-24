@@ -12,6 +12,10 @@ const userSchema = mongoose.Schema(
             default:
                 "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
         },
+        bio: {
+            type: String,
+            default: "Hey there! I am using Talk-A-Tive.",
+        },
         isAdmin: {
             type: Boolean,
             required: true,

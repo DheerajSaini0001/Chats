@@ -6,6 +6,15 @@ const messageSchema = mongoose.Schema(
         content: { type: String, trim: true },
         chat: { type: mongoose.Schema.Types.ObjectId, ref: "Chat" },
         readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+        attachment: {
+            type: {
+                url: { type: String, required: true },
+                fileType: { type: String, required: true }, // image, document, video, audio, other
+                fileName: { type: String, required: true },
+                fileSize: { type: Number, required: true }, // in bytes
+            },
+            default: null,
+        },
     },
     { timestamps: true }
 );
