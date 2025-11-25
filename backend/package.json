@@ -4,7 +4,7 @@
   "description": "Real-time chat application backend",
   "main": "backend/server.js",
   "scripts": {
-    "dev": "nodemon backend/server.js"
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "@stream-io/node-sdk": "^0.7.21",
