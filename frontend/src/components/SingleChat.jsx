@@ -8,6 +8,8 @@ import Lottie from "react-lottie";
 import animationData from "../animations/typing.json";
 import ProfileModal from "./miscellanous/ProfileModal";
 import { uploadFileToCloudinary } from "../utils/fileUpload";
+import { Send, Video, Link, ArrowLeft } from 'lucide-react';
+import VideoCall from "./VideoCall";
 
 const ENDPOINT = "http://localhost:5001";
 var socket, selectedChatCompare;
@@ -23,6 +25,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const [profileUser, setProfileUser] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [isCallOpen, setIsCallOpen] = useState(false);
+    const [incomingCall, setIncomingCall] = useState(null);
     const fileInputRef = useRef(null);
 
     const { user, selectedChat, setSelectedChat, notification, setNotification } =
@@ -35,6 +39,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         rendererSettings: {
             preserveAspectRatio: "xMidYMid slice",
         },
+    };
+
+    const startCall = () => {
+        setIsCallOpen(true);
+        socket.emit("call started", {
+            chat: selectedChat,
+            caller: user,
+        });
     };
 
     const fetchMessages = async () => {
@@ -135,6 +147,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         socket.on("connected", () => setSocketConnected(true));
         socket.on("typing", () => setIsTyping(true));
         socket.on("stop typing", () => setIsTyping(false));
+
+        socket.on("incoming call", ({ chat, caller }) => {
+            setIncomingCall({ chat, caller });
+        });
+
+        return () => {
+            socket.off("incoming call");
+        };
     }, []);
 
     useEffect(() => {
@@ -188,10 +208,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             className="md:hidden flex items-center justify-center p-2 rounded-full hover:bg-white/10 transition-colors text-white"
                             onClick={() => setSelectedChat("")}
                         >
-                            <i className="fas fa-arrow-left"></i>
+                            <ArrowLeft size={25} />
                         </button>
 
                         <div className="flex items-center gap-3">
+                            <button
+                                onClick={startCall}
+                                className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-gray-300 hover:text-cyan-400 transition-colors border border-white/5 hover:border-cyan-500/30"
+                                title="Start Video Call"
+                            >
+                                <Video size={28} className="text-white" />
+                            </button>
                             {!selectedChat.isGroupChat ? (
                                 <>
                                     <button
@@ -262,7 +289,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                 {uploading && (
                                     <div className="mb-4 p-4 bg-white/5 border border-white/10 rounded-lg">
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-sm text-gray-300">Uploading file...</span>
+                                            <span className="text-sm text-gray-300">{uploadProgress === 100 ? "Processing..." : "Uploading file..."}</span>
                                             <span className="text-sm text-cyan-400">{uploadProgress}%</span>
                                         </div>
                                         <div className="w-full bg-white/10 rounded-full h-2">
@@ -292,7 +319,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                         className="p-3 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                         title="Attach file"
                                     >
-                                        <i className="fas fa-paperclip text-gray-400 hover:text-cyan-400 transition-colors"></i>
+                                        <Link    size={17} />
                                     </button>
                                     <input
                                         className="flex-1 p-4 pl-5 rounded-xl outline-none text-sm transition-all placeholder-gray-500 bg-white/5 border border-white/5 text-gray-200 focus:border-primary/50 focus:bg-white/10 focus:shadow-[0_0_15px_rgba(6,182,212,0.1)]"
@@ -307,7 +334,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                         disabled={uploading || !newMessage}
                                         className="p-3 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-white transition-colors shadow-lg shadow-cyan-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        <i className="fas fa-paper-plane"></i>
+                                        <Send size={17} className="text-white" />
                                     </button>
                                 </div>
                             </div>
@@ -334,6 +361,61 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 onClose={() => setIsProfileOpen(false)}
                 user={profileUser}
             />
+
+            {/* Video Call Modal */}
+            {isCallOpen && (
+                <VideoCall
+                    chatId={selectedChat._id}
+                    onClose={() => setIsCallOpen(false)}
+                />
+            )}
+
+            {/* Incoming Call Notification Modal */}
+            {incomingCall && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+                    <div className="bg-[#0f172a] p-8 rounded-2xl border border-cyan-500/30 shadow-[0_0_50px_rgba(6,182,212,0.3)] flex flex-col items-center gap-6 max-w-sm w-full mx-4 animate-in fade-in zoom-in duration-300">
+                        <div className="relative">
+                            <img
+                                src={incomingCall.caller.pic}
+                                alt={incomingCall.caller.name}
+                                className="w-24 h-24 rounded-full object-cover border-4 border-cyan-500 shadow-lg"
+                            />
+                            <div className="absolute inset-0 rounded-full animate-ping border-2 border-cyan-400 opacity-75"></div>
+                        </div>
+
+                        <div className="text-center">
+                            <h3 className="text-2xl font-bold text-white mb-1">{incomingCall.caller.name}</h3>
+                            <p className="text-cyan-400 animate-pulse">Incoming Video Call...</p>
+                        </div>
+
+                        <div className="flex gap-4 w-full">
+                            <button
+                                onClick={() => setIncomingCall(null)}
+                                className="flex-1 py-3 px-4 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-xl font-semibold transition-colors border border-red-500/20"
+                            >
+                                Decline
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setSelectedChat(incomingCall.chat);
+                                    setIsCallOpen(true);
+                                    setIncomingCall(null);
+                                }}
+                                className="flex-1 py-3 px-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-colors shadow-lg shadow-green-500/30"
+                            >
+                                Accept
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Video Call Modal */}
+            {isCallOpen && (
+                <VideoCall
+                    chatId={selectedChat._id}
+                    onClose={() => setIsCallOpen(false)}
+                />
+            )}
         </>
     );
 };

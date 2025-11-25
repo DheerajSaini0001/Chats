@@ -107,9 +107,14 @@ const MyChats = ({ fetchAgain }) => {
                                                 <span className={`${selectedChat === chat ? "text-cyan-400" : "text-gray-400"} font-medium mr-1`}>
                                                     {chat.latestMessage.sender.name}:
                                                 </span>
-                                                {chat.latestMessage.content.length > 50
-                                                    ? chat.latestMessage.content.substring(0, 51) + "..."
-                                                    : chat.latestMessage.content}
+                                                {chat.latestMessage.content
+                                                    ? (chat.latestMessage.content.length > 50
+                                                        ? chat.latestMessage.content.substring(0, 51) + "..."
+                                                        : chat.latestMessage.content)
+                                                    : (chat.latestMessage.attachment
+                                                        ? <span className="italic flex items-center gap-1"><i className="fas fa-paperclip"></i> Attachment</span>
+                                                        : "")
+                                                }
                                             </p>
                                         )}
                                     </div>

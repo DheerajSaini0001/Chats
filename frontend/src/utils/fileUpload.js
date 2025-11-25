@@ -1,7 +1,7 @@
 // Utility function to upload files to Cloudinary
 export const uploadFileToCloudinary = async (file, onProgress) => {
     const cloudName = "db5jdjjon";
-    const uploadPreset = "chat-files"; // Create this preset in Cloudinary
+    const uploadPreset = "chat-app"; // Create this preset in Cloudinary
 
     // Check file size (10MB limit)
     const maxSize = 10 * 1024 * 1024; // 10MB in bytes
@@ -34,7 +34,7 @@ export const uploadFileToCloudinary = async (file, onProgress) => {
                     } else {
                         resolve({
                             url: response.secure_url,
-                            fileType: getFileType(response.resource_type, response.format),
+                            fileType: getFileType(response.resource_type, response.format, file.name),
                             fileName: file.name,
                             fileSize: file.size,
                         });
@@ -48,7 +48,7 @@ export const uploadFileToCloudinary = async (file, onProgress) => {
                 reject(new Error("Upload failed"));
             });
 
-            xhr.open("POST", `https://api.cloudinary.com/v1_1/${cloudName}/upload`);
+            xhr.open("POST", `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`);
             xhr.send(formData);
         });
     } catch (error) {
@@ -57,14 +57,19 @@ export const uploadFileToCloudinary = async (file, onProgress) => {
 };
 
 // Determine file type from Cloudinary response
-const getFileType = (resourceType, format) => {
+const getFileType = (resourceType, format, fileName) => {
     if (resourceType === "image") return "image";
     if (resourceType === "video") return "video";
     if (resourceType === "audio") return "audio";
 
+    // Fallback to filename extension if format is missing (common for raw files)
+    const ext = format || fileName.split('.').pop();
+
+    if (!ext) return "other";
+
     // Check by format for documents
     const documentFormats = ["pdf", "doc", "docx", "txt", "xls", "xlsx", "ppt", "pptx"];
-    if (documentFormats.includes(format.toLowerCase())) return "document";
+    if (documentFormats.includes(ext.toLowerCase())) return "document";
 
     return "other";
 };
