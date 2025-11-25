@@ -2,61 +2,103 @@
 
 /* Theme Variables */
 :root {
-  /* Light mode colors */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
+  /* Light mode colors - Premium Soft Slate */
+  --bg-primary: #f8fafc;
+  /* Slate 50 */
+  --bg-secondary: #ffffff;
+  /* White */
   --bg-tertiary: #f1f5f9;
+  /* Slate 100 */
   --text-primary: #0f172a;
+  /* Slate 900 */
   --text-secondary: #475569;
-  --text-tertiary: #64748b;
-  --border-color: rgba(15, 23, 42, 0.1);
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(15, 23, 42, 0.1);
+  /* Slate 600 */
+  --text-tertiary: #94a3b8;
+  /* Slate 400 */
+  --border-color: #e2e8f0;
+  /* Slate 200 */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
 }
 
 [data-theme="dark"] {
-  /* Dark mode colors */
-  --bg-primary: #09090b;
-  --bg-secondary: #18181b;
-  --bg-tertiary: #27272a;
-  --text-primary: #e2e8f0;
-  --text-secondary: #94a3b8;
+  /* Dark mode colors - Deep Cyber Navy */
+  --bg-primary: #020617;
+  /* Slate 950 */
+  --bg-secondary: #0f172a;
+  /* Slate 900 */
+  --bg-tertiary: #1e293b;
+  /* Slate 800 */
+  --text-primary: #f8fafc;
+  /* Slate 50 */
+  --text-secondary: #cbd5e1;
+  /* Slate 300 */
   --text-tertiary: #64748b;
-  --border-color: rgba(255, 255, 255, 0.1);
-  --glass-bg: rgba(15, 23, 42, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  /* Slate 500 */
+  --border-color: rgba(255, 255, 255, 0.08);
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --scrollbar-thumb: #334155;
+  --scrollbar-thumb-hover: #475569;
 }
 
 /* The "Antigravity" Background */
 body {
   margin: 0;
   background-color: var(--bg-primary);
+  background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+  background-size: 24px 24px;
   color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Smooth transitions for all themed elements */
 * {
-  transition-property: background-color, color, border-color;
-  transition-duration: 0.3s;
-  transition-timing-function: ease;
+  transition-property: background-color, color, border-color, opacity, transform;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
 }
 
-/* Make the scrollbar invisible but functional (Futuristic feel) */
-.overflow-x-hidden::-webkit-scrollbar {
-  width: 4px;
+/* Global Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.overflow-x-hidden::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.overflow-x-hidden::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
   border-radius: 10px;
 }
 
-.overflow-x-hidden::-webkit-scrollbar-thumb:hover {
-  background: rgba(8, 145, 178, 0.5);
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* Utility Class for Glassmorphism */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-input {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.glass-input:focus {
+  border-color: #6366f1;
+  /* Indigo 500 */
+  outline: none;
 }

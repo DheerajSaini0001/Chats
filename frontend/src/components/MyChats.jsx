@@ -77,93 +77,97 @@ const MyChats = ({ fetchAgain }) => {
         <div
             className={`${selectedChat ? "hidden" : "flex"} 
             md:flex flex-col items-center p-0 
-            bg-white/80 dark:bg-gray-900/90 w-full md:w-[31%] 
-            rounded-xl border border-gray-200 dark:border-white/5 
-            overflow-hidden h-full shadow-2xl relative transition-colors duration-300`}
+            bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl w-full md:w-[31%] 
+            rounded-2xl border border-slate-200/50 dark:border-white/10 
+            overflow-hidden h-full shadow-xl relative transition-all duration-300`}
         >
             {/* Header */}
-            <div className="pb-3 px-4 py-4 text-xl font-bold flex w-full justify-between items-center border-b border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-white/5 z-10 transition-colors duration-300">
-                <span className="tracking-wider font-sans bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 to-purple-600 dark:from-cyan-400 dark:to-purple-400">
-                    CHATS
+            <div className="px-6 py-5 w-full flex justify-between items-center border-b border-slate-200/50 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 z-10">
+                <span className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-cyan-600 dark:from-indigo-400 dark:to-cyan-400 text-transparent bg-clip-text">
+                    Chats
                 </span>
                 <GroupChatModal>
-                    <button className="flex items-center text-xs bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/50 px-3 py-2 rounded-lg hover:bg-cyan-500/20 transition-all font-medium shadow-[0_0_10px_rgba(6,182,212,0.2)] hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] active:scale-95">
-                        <span className="mr-1 text-lg">+</span> NEW GROUP
+                    <button className="flex items-center gap-2 text-xs font-bold bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-4 py-2.5 rounded-xl hover:opacity-90 transition-all shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 active:scale-95">
+                        <span className="text-lg leading-none">+</span>
+                        <span>NEW GROUP</span>
                     </button>
                 </GroupChatModal>
             </div>
 
             {/* Chat List */}
-            <div className="flex flex-col w-full h-full overflow-y-hidden relative bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] bg-opacity-5">
+            <div className="flex flex-col w-full h-full overflow-y-hidden relative">
                 {chats ? (
-                    <div className="overflow-y-scroll overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-white/10 hover:scrollbar-thumb-cyan-500/50 space-y-2 px-3 py-4">
+                    <div className="overflow-y-scroll overflow-x-hidden scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 hover:scrollbar-thumb-indigo-500/50 space-y-2 p-4">
                         <AnimatePresence>
                             {chats.map((chat, i) => (
                                 <motion.div
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.2, delay: i * 0.05 }}
                                     onClick={() => setSelectedChat(chat)}
                                     className={`
-                                        cursor-pointer px-3 py-3 rounded-xl transition-all duration-300 flex items-center gap-3 border relative overflow-hidden group
+                                        cursor-pointer p-3 rounded-xl transition-all duration-200 flex items-center gap-4 border relative overflow-hidden group
                                         ${selectedChat === chat
-                                            ? "bg-gradient-to-r from-cyan-500/20 to-transparent border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.1)]"
-                                            : "bg-gray-100/50 dark:bg-white/5 hover:bg-gray-200/50 dark:hover:bg-white/10 border-transparent hover:border-gray-300 dark:hover:border-white/10"
+                                            ? "bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/30 shadow-md"
+                                            : "bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 border-transparent hover:border-slate-200 dark:hover:border-white/5"
                                         }
                                     `}
                                     key={chat._id}
                                 >
-                                    {/* Active Indicator Strip */}
-                                    {selectedChat === chat && (
-                                        <motion.div
-                                            layoutId="active-strip"
-                                            className="absolute left-0 top-0 bottom-0 w-1 bg-cyan-500 shadow-[0_0_10px_cyan]"
-                                        />
-                                    )}
-
                                     {/* Avatar Logic */}
                                     <div className="relative">
                                         {!chat.isGroupChat ? (
-                                            <img
-                                                src={getSenderFull(loggedUser, chat.users).pic}
-                                                alt="avatar"
-                                                className={`w-10 h-10 rounded-full object-cover border-2 ${selectedChat === chat ? 'border-cyan-400' : 'border-gray-300 dark:border-transparent group-hover:border-gray-400 dark:group-hover:border-white/20'}`}
-                                            />
+                                            <div className="relative">
+                                                <img
+                                                    src={getSenderFull(loggedUser, chat.users).pic}
+                                                    alt="avatar"
+                                                    className={`w-12 h-12 rounded-full object-cover ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-900 transition-all ${selectedChat === chat ? 'ring-indigo-500' : 'ring-transparent group-hover:ring-slate-200 dark:group-hover:ring-slate-700'}`}
+                                                />
+                                                {/* Online Status Dot (Mockup) */}
+                                                <div className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
+                                            </div>
                                         ) : (
-                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 ${selectedChat === chat ? 'bg-cyan-900 text-cyan-200 border-cyan-500' : 'bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-gray-300 border-transparent'}`}>
+                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-900 transition-all ${selectedChat === chat ? 'bg-indigo-600 text-white ring-indigo-500' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 ring-transparent'}`}>
                                                 {chat.chatName[0].toUpperCase()}
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Text Content */}
-                                    <div className="flex-1 overflow-hidden">
-                                        <div className="flex justify-between items-center">
-                                            <p className={`font-medium text-sm tracking-wide ${selectedChat === chat ? "text-cyan-700 dark:text-cyan-100" : "text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white"}`}>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-baseline mb-1">
+                                            <h4 className={`font-semibold text-sm truncate ${selectedChat === chat ? "text-indigo-900 dark:text-indigo-100" : "text-slate-800 dark:text-slate-200"}`}>
                                                 {!chat.isGroupChat
                                                     ? getSender(loggedUser, chat.users)
                                                     : chat.chatName}
-                                            </p>
+                                            </h4>
+                                            {/* Time Placeholder */}
+                                            {chat.latestMessage && (
+                                                <span className={`text-[10px] font-medium ${selectedChat === chat ? "text-indigo-600 dark:text-indigo-300" : "text-slate-400"}`}>
+                                                    {new Date(chat.latestMessage.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                            )}
                                         </div>
 
                                         {typingChats.has(chat._id) ? (
-                                            <p className="text-xs mt-1 text-green-500 font-medium italic animate-pulse">
+                                            <p className="text-xs text-indigo-500 font-semibold animate-pulse flex items-center gap-1">
+                                                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-bounce"></span>
                                                 Typing...
                                             </p>
                                         ) : (
                                             chat.latestMessage && (
-                                                <p className="text-xs mt-1 truncate text-gray-500 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors">
-                                                    <span className={`${selectedChat === chat ? "text-cyan-600 dark:text-cyan-400" : "text-gray-500 dark:text-gray-400"} font-medium mr-1`}>
+                                                <p className={`text-xs truncate ${selectedChat === chat ? "text-indigo-700/80 dark:text-indigo-200/70" : "text-slate-500 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300"}`}>
+                                                    <span className="font-medium mr-1 opacity-80">
                                                         {chat.latestMessage.sender._id === loggedUser?._id
                                                             ? "You:"
-                                                            : chat.latestMessage.sender.name + ":"}
+                                                            : chat.latestMessage.sender.name.split(" ")[0] + ":"}
                                                     </span>
                                                     {chat.latestMessage.content
-                                                        ? (chat.latestMessage.content.length > 50
-                                                            ? chat.latestMessage.content.substring(0, 51) + "..."
+                                                        ? (chat.latestMessage.content.length > 40
+                                                            ? chat.latestMessage.content.substring(0, 40) + "..."
                                                             : chat.latestMessage.content)
                                                         : (chat.latestMessage.attachment
-                                                            ? <span className="italic flex items-center gap-1"><i className="fas fa-paperclip"></i> Attachment</span>
+                                                            ? <span className="italic inline-flex items-center gap-1"><i className="fas fa-paperclip text-[10px]"></i> Attachment</span>
                                                             : "")
                                                     }
                                                 </p>
@@ -175,14 +179,14 @@ const MyChats = ({ fetchAgain }) => {
                         </AnimatePresence>
                     </div>
                 ) : (
-                    /* Holographic Loading Skeletons */
-                    <div className="flex flex-col space-y-4 p-4">
-                        {[1, 2, 3, 4].map((n) => (
-                            <div key={n} className="flex items-center space-x-3 opacity-50 animate-pulse">
-                                <div className="rounded-full bg-gray-200 dark:bg-white/10 h-10 w-10"></div>
-                                <div className="flex-1 space-y-2">
-                                    <div className="h-4 bg-gray-200 dark:bg-white/10 rounded w-1/3"></div>
-                                    <div className="h-3 bg-gray-100 dark:bg-white/5 rounded w-3/4"></div>
+                    /* Refined Loading Skeletons */
+                    <div className="flex flex-col space-y-4 p-6">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                            <div key={n} className="flex items-center space-x-4 opacity-60 animate-pulse">
+                                <div className="rounded-full bg-slate-200 dark:bg-slate-700 h-12 w-12"></div>
+                                <div className="flex-1 space-y-2.5">
+                                    <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
+                                    <div className="h-3 bg-slate-100 dark:bg-slate-800 rounded w-3/4"></div>
                                 </div>
                             </div>
                         ))}

@@ -68,10 +68,10 @@ const ScrollableChat = ({ messages, handleDeleteMessage }) => {
                                 ) && <div className="w-10 mr-0"></div>}
 
                             <div
-                                className={`px-4 py-2 max-w-[75%] shadow-md text-[15px] leading-relaxed relative group
+                                className={`px-4 py-2 max-w-[75%] text-[15px] leading-relaxed relative group transition-all duration-200
                                     ${isMyMessage
-                                        ? "bg-chat-bubble-me text-white shadow-[0_4px_15px_rgba(8,145,178,0.3)]"
-                                        : "bg-chat-bubble-friend text-gray-200 border border-white/5 shadow-[0_4px_15px_rgba(0,0,0,0.2)]"}
+                                        ? "bg-gradient-to-br from-cyan-500 to-blue-600 text-white shadow-lg shadow-cyan-500/20"
+                                        : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-sm dark:shadow-none hover:shadow-md transition-shadow"}
                                 `}
                                 style={{
                                     borderRadius: borderRadius
@@ -79,7 +79,7 @@ const ScrollableChat = ({ messages, handleDeleteMessage }) => {
                                 onMouseLeave={() => setActiveMessageId(null)}
                             >
                                 {m.isDeletedForEveryone ? (
-                                    <div className="italic text-sm opacity-70 flex items-center gap-2 text-gray-400">
+                                    <div className="italic text-sm opacity-70 flex items-center gap-2 text-slate-500 dark:text-slate-400">
                                         <i className="fas fa-ban text-xs"></i> This message was deleted
                                     </div>
                                 ) : (
@@ -98,38 +98,38 @@ const ScrollableChat = ({ messages, handleDeleteMessage }) => {
 
                                         {/* Dropdown Trigger */}
                                         <button
-                                            className={`absolute top-1 right-1 p-1 rounded text-xs transition-all ${activeMessageId === m._id ? "opacity-100 bg-black/20" : "opacity-0 group-hover:opacity-100 hover:bg-black/20"}`}
+                                            className={`absolute top-1 right-1 p-1 rounded-full text-xs transition-all duration-200 ${activeMessageId === m._id ? "opacity-100 bg-black/10 dark:bg-white/10" : "opacity-0 group-hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10"}`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setActiveMessageId(activeMessageId === m._id ? null : m._id);
                                             }}
                                         >
-                                            <i className="fas fa-ellipsis-v text-white/70"></i>
+                                            <i className={`fas fa-ellipsis-v w-4 h-4 flex items-center justify-center ${isMyMessage ? "text-white/90" : "text-slate-500 dark:text-slate-400"}`}></i>
                                         </button>
 
                                         {/* Dropdown Menu */}
                                         {activeMessageId === m._id && (
-                                            <div className="absolute top-8 right-0 bg-[#1a1a1a] border border-white/10 rounded-lg shadow-xl z-50 w-40 overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
+                                            <div className="absolute top-8 right-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 rounded-xl shadow-2xl z-50 w-44 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200 origin-top-right">
                                                 <button
-                                                    className="px-4 py-2 text-left text-sm hover:bg-white/10 text-red-400 transition-colors flex items-center gap-2"
+                                                    className="px-4 py-2.5 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700/50 text-red-500 dark:text-red-400 transition-colors flex items-center gap-3 font-medium"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleDeleteMessage(m._id, "me");
                                                         setActiveMessageId(null);
                                                     }}
                                                 >
-                                                    <i className="fas fa-trash-alt text-xs"></i> Delete for me
+                                                    <i className="fas fa-trash-alt text-xs opacity-70"></i> Delete for me
                                                 </button>
                                                 {m.sender._id === user._id && (
                                                     <button
-                                                        className="px-4 py-2 text-left text-sm hover:bg-white/10 text-red-400 transition-colors border-t border-white/5 flex items-center gap-2"
+                                                        className="px-4 py-2.5 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-700/50 text-red-500 dark:text-red-400 transition-colors border-t border-slate-200/50 dark:border-slate-700/50 flex items-center gap-3 font-medium"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
                                                             handleDeleteMessage(m._id, "everyone");
                                                             setActiveMessageId(null);
                                                         }}
                                                     >
-                                                        <i className="fas fa-globe text-xs"></i> Delete for everyone
+                                                        <i className="fas fa-globe text-xs opacity-70"></i> Delete for everyone
                                                     </button>
                                                 )}
                                             </div>
@@ -137,8 +137,9 @@ const ScrollableChat = ({ messages, handleDeleteMessage }) => {
                                     </>
                                 )}
 
-                                <div className={`text-[10px] mt-1 text-right ${isMyMessage ? "text-cyan-100" : "text-gray-400"}`}>
-                                    {/* Timestamp placeholder */}
+                                <div className={`text-[10px] mt-1 text-right font-medium opacity-80 ${isMyMessage ? "text-blue-100" : "text-slate-400 dark:text-slate-500"}`}>
+                                    {/* Timestamp placeholder - could be real time if available in 'm' */}
+                                    {new Date(m.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </div>
                             </div>
                         </motion.div>

@@ -84,51 +84,51 @@ const GroupChatModal = ({ children }) => {
             {isOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center">
                     <div
-                        className="fixed inset-0 bg-black opacity-50"
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
                         onClick={() => setIsOpen(false)}
                     ></div>
-                    <div className="relative bg-white p-6 rounded-lg shadow-xl w-96 z-50">
+                    <div className="relative bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-2xl w-96 z-50 border border-slate-200 dark:border-white/10 transition-colors duration-300">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-2xl font-sans">Create Group Chat</h3>
+                            <h3 className="text-2xl font-sans font-bold text-slate-900 dark:text-white">Create Group Chat</h3>
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="text-gray-500 hover:text-gray-700"
+                                className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                             >
-                                X
+                                <i className="fas fa-times text-xl"></i>
                             </button>
                         </div>
 
                         <div className="flex flex-col gap-3">
                             <input
                                 placeholder="Chat Name"
-                                className="p-2 border rounded"
+                                className="p-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                                 onChange={(e) => setGroupChatName(e.target.value)}
                             />
                             <input
                                 placeholder="Add Users eg: John, Piyush, Jane"
-                                className="p-2 border rounded"
+                                className="p-3 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
                                 onChange={(e) => handleSearch(e.target.value)}
                             />
 
-                            <div className="flex flex-wrap gap-1">
+                            <div className="flex flex-wrap gap-2">
                                 {selectedUsers.map((u) => (
                                     <div
                                         key={u._id}
-                                        className="bg-purple-500 text-white px-2 py-1 rounded-full text-sm flex items-center"
+                                        className="bg-indigo-500 text-white px-3 py-1 rounded-full text-sm flex items-center shadow-md"
                                     >
                                         {u.name}
                                         <span
-                                            className="ml-2 cursor-pointer"
+                                            className="ml-2 cursor-pointer hover:text-red-200"
                                             onClick={() => handleDelete(u)}
                                         >
-                                            X
+                                            <i className="fas fa-times"></i>
                                         </span>
                                     </div>
                                 ))}
                             </div>
 
                             {loading ? (
-                                <div>Loading...</div>
+                                <div className="text-center text-indigo-500 dark:text-indigo-400 animate-pulse">Loading...</div>
                             ) : (
                                 searchResult
                                     ?.slice(0, 4)
@@ -136,16 +136,16 @@ const GroupChatModal = ({ children }) => {
                                         <div
                                             key={user._id}
                                             onClick={() => handleGroup(user)}
-                                            className="cursor-pointer bg-gray-100 hover:bg-blue-500 hover:text-white p-2 rounded flex items-center"
+                                            className="cursor-pointer bg-slate-50 dark:bg-slate-800/30 hover:bg-indigo-500 dark:hover:bg-indigo-600 hover:text-white p-2 rounded-lg flex items-center transition-colors border border-transparent hover:border-indigo-400"
                                         >
                                             <img
                                                 src={user.pic}
                                                 alt={user.name}
-                                                className="w-8 h-8 rounded-full mr-2"
+                                                className="w-8 h-8 rounded-full mr-2 object-cover"
                                             />
                                             <div>
-                                                <div className="font-semibold">{user.name}</div>
-                                                <div className="text-xs">{user.email}</div>
+                                                <div className="font-semibold text-sm">{user.name}</div>
+                                                <div className="text-xs opacity-80">{user.email}</div>
                                             </div>
                                         </div>
                                     ))
@@ -153,7 +153,7 @@ const GroupChatModal = ({ children }) => {
 
                             <button
                                 onClick={handleSubmit}
-                                className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 mt-2"
+                                className="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-lg font-semibold shadow-lg shadow-indigo-500/30 transition-all mt-2"
                             >
                                 Create Chat
                             </button>

@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 const AnimatedBackground = () => {
     const canvasRef = useRef(null);
     const mouseRef = useRef({ x: 0, y: 0 });
     const particlesRef = useRef([]);
+    const { theme } = useTheme();
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -11,7 +13,6 @@ const AnimatedBackground = () => {
 
         const ctx = canvas.getContext('2d');
         let animationFrameId;
-        let hue = 0; // For subtle color shifting
 
         // Set canvas size
         const resizeCanvas = () => {
@@ -33,12 +34,19 @@ const AnimatedBackground = () => {
                 this.density = (Math.random() * 20) + 1;
                 this.angle = Math.random() * 360;
                 this.velocity = Math.random() * 0.5 + 0.2;
-                
+
                 // Color: Mix of Cyan and Violet
                 const isCyan = Math.random() > 0.5;
-                this.color = isCyan 
-                    ? `rgba(6, 182, 212, ${Math.random() * 0.5 + 0.5})` 
-                    : `rgba(99, 102, 241, ${Math.random() * 0.5 + 0.5})`;
+                if (theme === 'dark') {
+                    this.color = isCyan
+                        ? `rgba(6, 182, 212, ${Math.random() * 0.5 + 0.5})`
+                        : `rgba(99, 102, 241, ${Math.random() * 0.5 + 0.5})`;
+                } else {
+                    // Darker colors for light mode
+                    this.color = isCyan
+                        ? `rgba(8, 145, 178, ${Math.random() * 0.5 + 0.5})`
+                        : `rgba(79, 70, 229, ${Math.random() * 0.5 + 0.5})`;
+                }
             }
 
             update(mouse) {
@@ -108,9 +116,9 @@ const AnimatedBackground = () => {
 
         // Animation loop
         const animate = () => {
-            // TRAIL EFFECT: Instead of clearing rect, we draw a semi-transparent black square.
+            // TRAIL EFFECT: Instead of clearing rect, we draw a semi-transparent square.
             // This creates the "motion blur" / trail effect.
-            ctx.fillStyle = 'rgba(5, 5, 5, 0.1)'; 
+            ctx.fillStyle = theme === 'dark' ? 'rgba(5, 5, 5, 0.1)' : 'rgba(255, 255, 255, 0.1)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Draw Mouse Glow
@@ -122,8 +130,15 @@ const AnimatedBackground = () => {
                 mouseRef.current.y,
                 300
             );
-            gradient.addColorStop(0, 'rgba(6, 182, 212, 0.1)'); // Cyan core
-            gradient.addColorStop(1, 'rgba(0,0,0,0)');
+
+            if (theme === 'dark') {
+                gradient.addColorStop(0, 'rgba(6, 182, 212, 0.1)'); // Cyan core
+                gradient.addColorStop(1, 'rgba(0,0,0,0)');
+            } else {
+                gradient.addColorStop(0, 'rgba(6, 182, 212, 0.05)'); // Lighter Cyan core
+                gradient.addColorStop(1, 'rgba(255,255,255,0)');
+            }
+
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -142,12 +157,12 @@ const AnimatedBackground = () => {
             window.removeEventListener('mousemove', handleMouseMove);
             cancelAnimationFrame(animationFrameId);
         };
-    }, []);
+    }, [theme]);
 
     return (
         <canvas
             ref={canvasRef}
-            className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 bg-[#050505]"
+            className="fixed top-0 left-0 w-full h-full pointer-events-none z-0 bg-white dark:bg-[#050505] transition-colors duration-300"
         />
     );
 };

@@ -44,10 +44,10 @@ const Login = () => {
 
     return (
         <div className="flex flex-col gap-6 p-2">
-            
+
             {/* Email Field */}
             <div className="flex flex-col gap-2 group">
-                <label className="text-xs font-bold text-gray-400 tracking-wider uppercase group-focus-within:text-indigo-400 transition-colors">
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 tracking-wider uppercase group-focus-within:text-indigo-500 dark:group-focus-within:text-indigo-400 transition-colors">
                     Email Address
                 </label>
                 <input
@@ -55,9 +55,9 @@ const Login = () => {
                     placeholder="Enter your email"
                     className="
                         w-full p-4 rounded-xl 
-                        bg-black/20 border border-white/10 
-                        text-white placeholder-gray-600 
-                        focus:outline-none focus:border-indigo-500/50 focus:bg-black/40
+                        bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-white/5 
+                        text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-600 
+                        focus:outline-none focus:border-indigo-500/50 focus:bg-white dark:focus:bg-slate-800
                         focus:shadow-[0_0_15px_rgba(99,102,241,0.3)]
                         transition-all duration-300 ease-in-out
                     "
@@ -68,7 +68,7 @@ const Login = () => {
 
             {/* Password Field */}
             <div className="flex flex-col gap-2 group">
-                <label className="text-xs font-bold text-gray-400 tracking-wider uppercase group-focus-within:text-indigo-400 transition-colors">
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 tracking-wider uppercase group-focus-within:text-indigo-500 dark:group-focus-within:text-indigo-400 transition-colors">
                     Password
                 </label>
                 <input
@@ -76,9 +76,9 @@ const Login = () => {
                     placeholder="Enter your password"
                     className="
                         w-full p-4 rounded-xl 
-                        bg-black/20 border border-white/10 
-                        text-white placeholder-gray-600 
-                        focus:outline-none focus:border-indigo-500/50 focus:bg-black/40
+                        bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-white/5 
+                        text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-600 
+                        focus:outline-none focus:border-indigo-500/50 focus:bg-white dark:focus:bg-slate-800
                         focus:shadow-[0_0_15px_rgba(99,102,241,0.3)]
                         transition-all duration-300 ease-in-out
                     "
@@ -95,8 +95,8 @@ const Login = () => {
                     mt-2 w-full p-4 rounded-xl font-bold tracking-wide text-white
                     bg-gradient-to-r from-indigo-600 to-violet-600
                     hover:from-indigo-500 hover:to-violet-500
-                    shadow-[0_0_20px_rgba(79,70,229,0.4)]
-                    hover:shadow-[0_0_30px_rgba(79,70,229,0.6)]
+                    shadow-lg shadow-indigo-500/30
+                    hover:shadow-indigo-500/50
                     active:scale-[0.98]
                     disabled:opacity-70 disabled:cursor-not-allowed
                     transition-all duration-300 transform
@@ -121,9 +121,9 @@ const Login = () => {
                 }}
                 className="
                     w-full p-3 rounded-xl font-semibold text-sm
-                    bg-rose-500/5 text-rose-400 
-                    border border-rose-500/30
-                    hover:bg-rose-500/10 hover:border-rose-500/60
+                    bg-rose-50 dark:bg-rose-500/5 text-rose-600 dark:text-rose-400 
+                    border border-rose-200 dark:border-rose-500/30
+                    hover:bg-rose-100 dark:hover:bg-rose-500/10 hover:border-rose-300 dark:hover:border-rose-500/60
                     hover:shadow-[0_0_15px_rgba(244,63,94,0.3)]
                     active:scale-[0.98]
                     transition-all duration-300

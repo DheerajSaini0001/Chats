@@ -115,32 +115,32 @@ const StatusDrawer = ({ isOpen, onClose }) => {
             <div className="fixed inset-0 bg-black/60" onClick={onClose}></div>
 
             {/* Drawer Content */}
-            <div className="relative z-50 w-80 bg-[#0f172a] h-full shadow-2xl flex flex-col border-r border-gray-800 animate-in slide-in-from-left duration-300">
-                <div className="p-4 border-b border-gray-800 flex justify-between items-center bg-[#1e293b]">
-                    <h2 className="text-xl font-bold text-white">Status</h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white">
+            <div className="relative z-50 w-80 bg-white dark:bg-slate-900 h-full shadow-2xl flex flex-col border-r border-slate-200 dark:border-slate-800 animate-in slide-in-from-left duration-300 transition-colors duration-300">
+                <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 transition-colors duration-300">
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">Status</h2>
+                    <button onClick={onClose} className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
                         <X size={24} />
                     </button>
                 </div>
 
                 <div className="flex-1 overflow-y-auto p-4 space-y-6">
                     {/* My Status */}
-                    <div className="flex items-center gap-4 cursor-pointer" onClick={() => myStatuses.length > 0 ? handleViewStatus({ user, statuses: myStatuses }) : fileInputRef.current.click()}>
+                    <div className="flex items-center gap-4 cursor-pointer p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/30 transition-colors" onClick={() => myStatuses.length > 0 ? handleViewStatus({ user, statuses: myStatuses }) : fileInputRef.current.click()}>
                         <div className="relative">
                             <img
                                 src={user.pic}
                                 alt="My Status"
-                                className={`w-12 h-12 rounded-full object-cover border-2 ${myStatuses.length > 0 ? 'border-cyan-500' : 'border-gray-600'}`}
+                                className={`w-12 h-12 rounded-full object-cover border-2 ${myStatuses.length > 0 ? 'border-cyan-500' : 'border-slate-200 dark:border-slate-600'}`}
                             />
                             {myStatuses.length === 0 && (
-                                <div className="absolute bottom-0 right-0 bg-cyan-500 rounded-full p-1 border-2 border-[#0f172a]">
+                                <div className="absolute bottom-0 right-0 bg-cyan-500 rounded-full p-1 border-2 border-white dark:border-slate-900">
                                     <Plus size={12} className="text-white" />
                                 </div>
                             )}
                         </div>
                         <div className="flex-1">
-                            <h3 className="text-white font-semibold">My Status</h3>
-                            <p className="text-xs text-gray-400">
+                            <h3 className="text-slate-900 dark:text-white font-semibold">My Status</h3>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
                                 {uploading ? "Uploading..." : (myStatuses.length > 0 ? "Click to view" : "Tap to add status update")}
                             </p>
                         </div>
@@ -155,19 +155,19 @@ const StatusDrawer = ({ isOpen, onClose }) => {
 
                     {/* Recent Updates */}
                     <div>
-                        <h3 className="text-gray-400 text-sm font-semibold mb-4 uppercase tracking-wider">Recent Updates</h3>
+                        <h3 className="text-slate-500 dark:text-slate-400 text-sm font-semibold mb-4 uppercase tracking-wider">Recent Updates</h3>
                         {loading ? (
                             <div className="flex justify-center p-4">
                                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cyan-500"></div>
                             </div>
                         ) : otherStatuses.length === 0 ? (
-                            <p className="text-gray-500 text-sm italic text-center">No recent updates</p>
+                            <p className="text-slate-500 text-sm italic text-center">No recent updates</p>
                         ) : (
                             <div className="space-y-4">
                                 {otherStatuses.map((group) => (
                                     <div
                                         key={group.user._id}
-                                        className="flex items-center gap-4 cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-colors"
+                                        className="flex items-center gap-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/30 p-2 rounded-lg transition-colors"
                                         onClick={() => handleViewStatus(group)}
                                     >
                                         <div className="relative">
@@ -178,8 +178,8 @@ const StatusDrawer = ({ isOpen, onClose }) => {
                                             />
                                         </div>
                                         <div>
-                                            <h4 className="text-white font-medium">{group.user.name}</h4>
-                                            <p className="text-xs text-gray-400">
+                                            <h4 className="text-slate-900 dark:text-white font-medium">{group.user.name}</h4>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">
                                                 {new Date(group.statuses[group.statuses.length - 1].createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                             </p>
                                         </div>

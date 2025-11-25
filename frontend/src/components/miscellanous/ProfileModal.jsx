@@ -136,11 +136,11 @@ const ProfileModal = ({ isOpen, onClose, user, isOwnProfile = false }) => {
                         transition={{ type: "spring", duration: 0.5 }}
                         className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[201] w-full max-w-md mx-4"
                     >
-                        <div className="glass p-8 rounded-2xl border border-white/10 shadow-2xl">
+                        <div className="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl transition-colors duration-300">
                             {/* Close Button */}
                             <button
                                 onClick={onClose}
-                                className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full"
+                                className="absolute top-4 right-4 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors p-2 hover:bg-slate-100 dark:hover:bg-white/10 rounded-full"
                             >
                                 <i className="fas fa-times text-xl"></i>
                             </button>
@@ -169,14 +169,14 @@ const ProfileModal = ({ isOpen, onClose, user, isOwnProfile = false }) => {
                                         </label>
                                     )}
                                     {!isEditing && (
-                                        <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-[#0f172a] shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+                                        <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white dark:border-slate-900 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
                                     )}
                                 </div>
 
                                 {/* Change Picture Button (Edit Mode) */}
                                 {isOwnProfile && isEditing && (
                                     <div className="mb-4 w-full space-y-2">
-                                        <label className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg cursor-pointer transition-all text-sm text-gray-300 hover:text-white flex items-center gap-2 justify-center">
+                                        <label className="px-4 py-2 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 rounded-lg cursor-pointer transition-all text-sm text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white flex items-center gap-2 justify-center">
                                             <i className="fas fa-upload"></i>
                                             <span>Upload Picture</span>
                                             <input
@@ -187,19 +187,19 @@ const ProfileModal = ({ isOpen, onClose, user, isOwnProfile = false }) => {
                                                 disabled={picLoading}
                                             />
                                         </label>
-                                        <div className="text-center text-xs text-gray-500">or</div>
+                                        <div className="text-center text-xs text-slate-500">or</div>
                                         <input
                                             type="text"
                                             placeholder="Paste image URL here"
                                             value={pic}
                                             onChange={(e) => setPic(e.target.value)}
-                                            className="w-full glass-input p-2 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-white placeholder-gray-500"
+                                            className="w-full p-2 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-500"
                                         />
                                     </div>
                                 )}
 
                                 {picLoading && (
-                                    <div className="flex items-center gap-2 text-sm text-indigo-400 mb-4">
+                                    <div className="flex items-center gap-2 text-sm text-indigo-500 dark:text-indigo-400 mb-4">
                                         <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -212,61 +212,61 @@ const ProfileModal = ({ isOpen, onClose, user, isOwnProfile = false }) => {
                                 {isEditing ? (
                                     <div className="w-full space-y-4 mb-4">
                                         <div className="flex flex-col gap-2 text-left">
-                                            <label className="text-sm font-semibold text-gray-300">Name</label>
+                                            <label className="text-sm font-semibold text-slate-600 dark:text-slate-300">Name</label>
                                             <input
                                                 type="text"
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
-                                                className="glass-input p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-white"
+                                                className="w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white"
                                             />
                                         </div>
                                         <div className="flex flex-col gap-2 text-left">
-                                            <label className="text-sm font-semibold text-gray-300">Bio</label>
+                                            <label className="text-sm font-semibold text-slate-600 dark:text-slate-300">Bio</label>
                                             <textarea
                                                 value={bio}
                                                 onChange={(e) => setBio(e.target.value)}
                                                 rows="3"
                                                 maxLength="150"
-                                                className="glass-input p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none text-white"
+                                                className="w-full p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all resize-none bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white"
                                                 placeholder="Tell us about yourself..."
                                             />
-                                            <span className="text-xs text-gray-500 text-right">{bio.length}/150</span>
+                                            <span className="text-xs text-slate-500 text-right">{bio.length}/150</span>
                                         </div>
                                     </div>
                                 ) : (
                                     <>
-                                        <h2 className="text-3xl font-bold text-white mb-2 tracking-tight">
+                                        <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2 tracking-tight">
                                             {name}
                                         </h2>
 
-                                        <div className="flex items-center gap-2 text-gray-400 mb-4">
+                                        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 mb-4">
                                             <i className="fas fa-envelope text-sm"></i>
                                             <p className="text-sm">{user.email}</p>
                                         </div>
 
                                         {/* Bio */}
-                                        <div className="w-full mb-4 p-3 bg-white/5 rounded-lg border border-white/5">
-                                            <p className="text-gray-300 text-sm italic">"{bio}"</p>
+                                        <div className="w-full mb-4 p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg border border-slate-200 dark:border-white/5">
+                                            <p className="text-slate-600 dark:text-slate-300 text-sm italic">"{bio}"</p>
                                         </div>
                                     </>
                                 )}
 
                                 {/* Divider */}
-                                <div className="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mb-6"></div>
+                                <div className="w-full h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-white/20 to-transparent mb-6"></div>
 
                                 {/* Additional Info */}
                                 {!isEditing && (
                                     <div className="w-full space-y-3 mb-4">
-                                        <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5">
-                                            <span className="text-gray-400 text-sm">Status</span>
-                                            <span className="text-green-400 text-sm font-semibold flex items-center gap-2">
+                                        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg border border-slate-200 dark:border-white/5">
+                                            <span className="text-slate-500 dark:text-slate-400 text-sm">Status</span>
+                                            <span className="text-green-500 dark:text-green-400 text-sm font-semibold flex items-center gap-2">
                                                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                                                 Online
                                             </span>
                                         </div>
-                                        <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5">
-                                            <span className="text-gray-400 text-sm">User ID</span>
-                                            <span className="text-gray-300 text-sm font-mono">{user._id?.slice(-8) || 'N/A'}</span>
+                                        <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/30 rounded-lg border border-slate-200 dark:border-white/5">
+                                            <span className="text-slate-500 dark:text-slate-400 text-sm">User ID</span>
+                                            <span className="text-slate-700 dark:text-slate-300 text-sm font-mono">{user._id?.slice(-8) || 'N/A'}</span>
                                         </div>
                                     </div>
                                 )}
@@ -277,7 +277,7 @@ const ProfileModal = ({ isOpen, onClose, user, isOwnProfile = false }) => {
                                         <div className="flex gap-3 w-full">
                                             <button
                                                 onClick={handleCancel}
-                                                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg font-semibold transition-colors"
+                                                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-semibold transition-colors"
                                                 disabled={loading || picLoading}
                                             >
                                                 Cancel
@@ -309,7 +309,7 @@ const ProfileModal = ({ isOpen, onClose, user, isOwnProfile = false }) => {
                                             </button>
                                             <button
                                                 onClick={onClose}
-                                                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg font-semibold transition-colors"
+                                                className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg font-semibold transition-colors"
                                             >
                                                 Close
                                             </button>

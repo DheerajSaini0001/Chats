@@ -96,13 +96,13 @@ const FileMessage = ({ attachment, isSender }) => {
     return (
         <div
             className={`flex items-center gap-3 p-3 rounded-lg border ${isSender
-                    ? 'bg-cyan-600/20 border-cyan-500/30'
-                    : 'bg-white/5 border-white/10'
+                ? 'bg-cyan-100 dark:bg-cyan-600/20 border-cyan-200 dark:border-cyan-500/30'
+                : 'bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/10'
                 } max-w-xs hover:bg-opacity-80 transition-all cursor-pointer`}
             onClick={handleDownload}
         >
             <div className="flex-shrink-0">
-                <i className={`fas ${getFileIcon(fileType, fileName)} text-3xl text-cyan-400`}></i>
+                <i className={`fas ${getFileIcon(fileType, fileName)} text-3xl text-cyan-600 dark:text-cyan-400`}></i>
             </div>
             <div className="flex-1 min-w-0">
                 <div className="font-medium text-sm truncate">{fileName}</div>
@@ -113,7 +113,7 @@ const FileMessage = ({ attachment, isSender }) => {
                     e.stopPropagation();
                     handleDownload();
                 }}
-                className="flex-shrink-0 p-2 hover:bg-white/10 rounded-full transition-colors"
+                className="flex-shrink-0 p-2 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full transition-colors"
             >
                 <i className="fas fa-download text-sm"></i>
             </button>

@@ -72,47 +72,49 @@ const SideDrawer = () => {
 
     return (
         <>
-            <div className="flex justify-between items-center w-full p-3 glass-header sticky top-0 z-10">
-                <div className="flex items-center gap-2">
+            <div className="flex justify-between items-center w-full px-5 py-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-white/10 sticky top-0 z-10 transition-all duration-300">
+                <div className="flex items-center gap-3">
                     <button
-                        className="flex items-center px-4 py-2 bg-white/10 dark:bg-white/5 rounded-full hover:bg-white/20 dark:hover:bg-white/10 transition-colors duration-200 text-gray-200"
+                        className="flex items-center px-4 py-2.5 bg-slate-100/50 dark:bg-slate-800/50 rounded-full hover:bg-white dark:hover:bg-slate-700 border border-transparent hover:border-slate-200 dark:hover:border-slate-600 shadow-sm hover:shadow-md transition-all duration-300 group"
                         onClick={() => setIsDrawerOpen(true)}
                     >
-                        <Search size={20} className="text-white" />
-                        <span className="hidden md:flex px-2 font-medium">Search</span>
+                        <Search size={18} className="text-slate-500 dark:text-slate-400 group-hover:text-indigo-500 transition-colors" />
+                        <span className="hidden md:flex px-2 font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white text-sm">Search</span>
                     </button>
                     <button
-                        className="flex items-center px-4 py-2 bg-white/10 dark:bg-white/5 rounded-full hover:bg-white/20 dark:hover:bg-white/10 transition-colors duration-200 text-gray-200"
+                        className="flex items-center px-4 py-2.5 bg-slate-100/50 dark:bg-slate-800/50 rounded-full hover:bg-white dark:hover:bg-slate-700 border border-transparent hover:border-slate-200 dark:hover:border-slate-600 shadow-sm hover:shadow-md transition-all duration-300 group"
                         onClick={() => setIsStatusOpen(true)}
                         title="Status"
                     >
-                        <CircleDashed size={20} className="text-white" />
-                        <span className="hidden md:flex px-2 font-medium">Status</span>
+                        <CircleDashed size={18} className="text-slate-500 dark:text-slate-400 group-hover:text-pink-500 transition-colors" />
+                        <span className="hidden md:flex px-2 font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white text-sm">Status</span>
                     </button>
                 </div>
 
-                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 tracking-tight cursor-default">
+                <h2 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-transparent bg-clip-text drop-shadow-sm cursor-default hover:scale-105 transition-transform duration-300">
                     Talk-A-Tive
                 </h2>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-4">
                     {/* Theme Toggle */}
-                    <ThemeToggle />
+                    <div className="hover:scale-110 transition-transform duration-200">
+                        <ThemeToggle />
+                    </div>
 
                     <div className="relative">
                         <button
-                            className="flex items-center space-x-2 focus:outline-none"
+                            className="flex items-center space-x-2 focus:outline-none group"
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                         >
-                            <div className="relative ">
+                            <div className="relative">
                                 <img
                                     src={user.pic}
                                     alt={user.name}
-                                    className="w-10 h-10 rounded-full object-cover border-2 border-indigo-500/50 shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
+                                    className="w-10 h-10 rounded-full object-cover ring-2 ring-indigo-500/50 ring-offset-2 ring-offset-white dark:ring-offset-slate-900 shadow-md group-hover:ring-indigo-500 transition-all duration-300"
                                 />
-                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0f172a]"></div>
+                                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900 shadow-sm"></div>
                             </div>
-                            <i className={`fas fa-chevron-down text-gray-400 text-sm transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}></i>
+                            <i className={`fas fa-chevron-down text-slate-400 dark:text-slate-500 text-xs transition-transform duration-300 group-hover:text-slate-600 dark:group-hover:text-slate-300 ${isDropdownOpen ? "rotate-180" : ""}`}></i>
                         </button>
 
                         {/* Dropdown Menu */}
@@ -122,26 +124,30 @@ const SideDrawer = () => {
                                     className="fixed inset-0 z-10"
                                     onClick={() => setIsDropdownOpen(false)}
                                 ></div>
-                                <div className="absolute right-0 mt-2 w-48 bg-[#1e293b] rounded-xl shadow-xl py-2 z-20 border border-gray-700 transform origin-top-right transition-all duration-200 animate-in fade-in zoom-in-95">
-                                    <div className="px-4 py-2 border-b border-gray-700">
-                                        <p className="text-sm font-semibold text-gray-200 truncate">{user.name}</p>
-                                        <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                                <div className="absolute right-0 mt-3 w-56 bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-2xl shadow-2xl py-2 z-20 border border-slate-200/50 dark:border-slate-700/50 transform origin-top-right transition-all duration-200 animate-in fade-in zoom-in-95">
+                                    <div className="px-5 py-3 border-b border-slate-200/50 dark:border-slate-700/50">
+                                        <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{user.name}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">{user.email}</p>
                                     </div>
-                                    <button
-                                        onClick={() => {
-                                            setIsProfileOpen(true);
-                                            setIsDropdownOpen(false);
-                                        }}
-                                        className="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5 w-full text-left transition-colors"
-                                    >
-                                        My Profile
-                                    </button>
-                                    <button
-                                        onClick={logoutHandler}
-                                        className="block px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 w-full text-left transition-colors"
-                                    >
-                                        Logout
-                                    </button>
+                                    <div className="p-1">
+                                        <button
+                                            onClick={() => {
+                                                setIsProfileOpen(true);
+                                                setIsDropdownOpen(false);
+                                            }}
+                                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-indigo-600 dark:hover:text-indigo-400 w-full text-left rounded-xl transition-all"
+                                        >
+                                            <i className="fas fa-user text-xs opacity-70"></i>
+                                            My Profile
+                                        </button>
+                                        <button
+                                            onClick={logoutHandler}
+                                            className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 w-full text-left rounded-xl transition-all"
+                                        >
+                                            <i className="fas fa-sign-out-alt text-xs opacity-70"></i>
+                                            Logout
+                                        </button>
+                                    </div>
                                 </div>
                             </>
                         )}
@@ -153,15 +159,15 @@ const SideDrawer = () => {
             {isDrawerOpen && (
                 <div className="fixed inset-0 z-[100] flex">
                     <div
-                        className="fixed inset-0 bg-black/60 "
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
                         onClick={() => setIsDrawerOpen(false)}
                     ></div>
-                    <div className="relative z-50 w-80 bg-[#0f172a] h-full shadow-2xl p-4 flex flex-col border-r border-gray-800">
-                        <div className="border-b border-gray-800 pb-4 mb-4 text-white font-semibold text-lg">Search Users</div>
+                    <div className="relative z-50 w-80 bg-white dark:bg-slate-900 h-full shadow-2xl p-4 flex flex-col border-r border-slate-200 dark:border-slate-800 transition-colors duration-300">
+                        <div className="border-b border-slate-200 dark:border-slate-800 pb-4 mb-4 text-slate-900 dark:text-white font-semibold text-lg">Search Users</div>
                         <div className="flex pb-4">
                             <input
                                 placeholder="Search by name or email"
-                                className="mr-2 p-2 bg-white/5 border border-gray-700 rounded-lg w-full text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition-colors"
+                                className="mr-2 p-2 bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg w-full text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
@@ -182,7 +188,7 @@ const SideDrawer = () => {
                                     <div
                                         key={user._id}
                                         onClick={() => accessChat(user._id)}
-                                        className="cursor-pointer bg-white/5 hover:bg-indigo-600/20 hover:border-indigo-500/50 border border-transparent w-full flex items-center px-3 py-3 rounded-lg transition-all"
+                                        className="cursor-pointer bg-slate-50 dark:bg-slate-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-600/20 hover:border-indigo-500/50 border border-transparent w-full flex items-center px-3 py-3 rounded-lg transition-all"
                                     >
                                         <img
                                             src={user.pic}
@@ -190,8 +196,8 @@ const SideDrawer = () => {
                                             className="w-10 h-10 rounded-full mr-3 object-cover"
                                         />
                                         <div>
-                                            <div className="font-semibold text-gray-200">{user.name}</div>
-                                            <div className="text-xs text-gray-400">
+                                            <div className="font-semibold text-slate-800 dark:text-slate-200">{user.name}</div>
+                                            <div className="text-xs text-slate-500 dark:text-slate-400">
                                                 <b>Email : </b>
                                                 {user.email}
                                             </div>
