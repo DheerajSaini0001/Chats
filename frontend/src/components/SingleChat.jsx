@@ -8,7 +8,7 @@ import Lottie from "react-lottie";
 import animationData from "../animations/typing.json";
 import ProfileModal from "./miscellanous/ProfileModal";
 import { uploadFileToCloudinary } from "../utils/fileUpload";
-import { Send, Video, Link, ArrowLeft } from 'lucide-react';
+import { Send, Video, Link, ArrowLeft, Phone } from 'lucide-react';
 import VideoCall from "./VideoCall";
 
 const ENDPOINT = "http://localhost:5001";
@@ -26,6 +26,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const [uploading, setUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isCallOpen, setIsCallOpen] = useState(false);
+    const [callType, setCallType] = useState("video");
     const [incomingCall, setIncomingCall] = useState(null);
     const fileInputRef = useRef(null);
 
@@ -41,11 +42,23 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         },
     };
 
-    const startCall = () => {
+    const startVideoCall = () => {
+        setCallType("video");
         setIsCallOpen(true);
         socket.emit("call started", {
             chat: selectedChat,
             caller: user,
+            callType: "video",
+        });
+    };
+
+    const startAudioCall = () => {
+        setCallType("audio");
+        setIsCallOpen(true);
+        socket.emit("call started", {
+            chat: selectedChat,
+            caller: user,
+            callType: "audio",
         });
     };
 
@@ -148,8 +161,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         socket.on("typing", () => setIsTyping(true));
         socket.on("stop typing", () => setIsTyping(false));
 
-        socket.on("incoming call", ({ chat, caller }) => {
-            setIncomingCall({ chat, caller });
+        socket.on("incoming call", ({ chat, caller, callType }) => {
+            setIncomingCall({ chat, caller, callType });
         });
 
         return () => {
@@ -161,6 +174,31 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         fetchMessages();
         selectedChatCompare = selectedChat;
     }, [selectedChat]);
+
+    const handleDeleteMessage = async (messageId, deleteType) => {
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+
+            const { data } = await axios.put(
+                "/api/message/delete",
+                { messageId, deleteType },
+                config
+            );
+
+            if (deleteType === "everyone") {
+                socket.emit("message deleted", data);
+            }
+
+            // Update local state immediately
+            setMessages(messages.map((m) => (m._id === messageId ? data : m)));
+        } catch (error) {
+            alert("Error deleting message: " + error.message);
+        }
+    };
 
     useEffect(() => {
         socket.on("message recieved", (newMessageRecieved) => {
@@ -174,6 +212,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 }
             } else {
                 setMessages([...messages, newMessageRecieved]);
+            }
+        });
+
+        socket.on("message deleted", (deletedMessage) => {
+            if (
+                selectedChatCompare &&
+                selectedChatCompare._id === deletedMessage.chat._id
+            ) {
+                setMessages(messages.map((m) => m._id === deletedMessage._id ? deletedMessage : m));
             }
         });
     });
@@ -204,21 +251,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             {selectedChat ? (
                 <>
                     <div className="text-xl md:text-2xl pb-3 px-4 py-3 w-full font-sans flex justify-between items-center border-b border-white/5 bg-white/5 sticky top-0 z-10 ">
-                        <button
-                            className="md:hidden flex items-center justify-center p-2 rounded-full hover:bg-white/10 transition-colors text-white"
-                            onClick={() => setSelectedChat("")}
-                        >
-                            <ArrowLeft size={25} />
-                        </button>
-
+                        {/* Left Side: Back Button & Profile Info */}
                         <div className="flex items-center gap-3">
                             <button
-                                onClick={startCall}
-                                className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-gray-300 hover:text-cyan-400 transition-colors border border-white/5 hover:border-cyan-500/30"
-                                title="Start Video Call"
+                                className="md:hidden flex items-center justify-center p-2 rounded-full hover:bg-white/10 transition-colors text-white"
+                                onClick={() => setSelectedChat("")}
                             >
-                                <Video size={28} className="text-white" />
+                                <ArrowLeft size={25} />
                             </button>
+
                             {!selectedChat.isGroupChat ? (
                                 <>
                                     <button
@@ -260,6 +301,24 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                 </>
                             )}
                         </div>
+
+                        {/* Right Side: Video Call Button */}
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={startAudioCall}
+                                className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-gray-300 hover:text-cyan-400 transition-colors border border-white/5 hover:border-cyan-500/30"
+                                title="Start Audio Call"
+                            >
+                                <Phone size={24} className="text-white" />
+                            </button>
+                            <button
+                                onClick={startVideoCall}
+                                className="p-2 bg-white/5 hover:bg-white/10 rounded-full text-gray-300 hover:text-cyan-400 transition-colors border border-white/5 hover:border-cyan-500/30"
+                                title="Start Video Call"
+                            >
+                                <Video size={28} className="text-white" />
+                            </button>
+                        </div>
                     </div>
 
                     <div className="flex flex-col justify-end p-3 bg-transparent w-full h-full overflow-y-hidden">
@@ -269,7 +328,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             </div>
                         ) : (
                             <div className="messages flex flex-col overflow-y-scroll scrollbar-hide px-2">
-                                <ScrollableChat messages={messages} />
+                                <ScrollableChat messages={messages} handleDeleteMessage={handleDeleteMessage} />
                                 {isTyping ? (
                                     <div className="mb-4 flex items-center gap-2 text-gray-400 text-sm">
                                         <Lottie
@@ -301,42 +360,134 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                     </div>
                                 )}
 
-                                <div className="relative flex items-center gap-2 group">
-                                    {/* Hidden file input */}
-                                    <input
-                                        ref={fileInputRef}
-                                        type="file"
-                                        className="hidden"
-                                        onChange={handleFileSelect}
-                                        disabled={uploading}
-                                        accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar"
-                                    />
+                                {/* Chat Request Logic */}
+                                {(!selectedChat.isGroupChat && selectedChat.isAccepted === false) ? (
+                                    selectedChat.requestedBy === user._id ? (
+                                        messages.length > 0 ? (
+                                            <div className="p-4 bg-white/5 border border-white/10 rounded-xl text-center">
+                                                <p className="text-cyan-400 font-semibold mb-1">Request Sent</p>
+                                                <p className="text-gray-400 text-sm">You can send more messages after the user accepts your request.</p>
+                                            </div>
+                                        ) : (
+                                            <div className="relative flex items-center gap-2 group">
+                                                {/* Hidden file input */}
+                                                <input
+                                                    ref={fileInputRef}
+                                                    type="file"
+                                                    className="hidden"
+                                                    onChange={handleFileSelect}
+                                                    disabled={uploading}
+                                                    accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar"
+                                                />
 
-                                    {/* Attach file button */}
-                                    <button
-                                        onClick={() => fileInputRef.current?.click()}
-                                        disabled={uploading}
-                                        className="p-3 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                        title="Attach file"
-                                    >
-                                        <Link    size={17} />
-                                    </button>
-                                    <input
-                                        className="flex-1 p-4 pl-5 rounded-xl outline-none text-sm transition-all placeholder-gray-500 bg-white/5 border border-white/5 text-gray-200 focus:border-primary/50 focus:bg-white/10 focus:shadow-[0_0_15px_rgba(6,182,212,0.1)]"
-                                        placeholder="Type a message..."
-                                        onChange={typingHandler}
-                                        value={newMessage}
-                                        onKeyDown={sendMessage}
-                                        disabled={uploading}
-                                    />
-                                    <button
-                                        onClick={(e) => sendMessage(null)}
-                                        disabled={uploading || !newMessage}
-                                        className="p-3 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-white transition-colors shadow-lg shadow-cyan-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        <Send size={17} className="text-white" />
-                                    </button>
-                                </div>
+                                                {/* Attach file button */}
+                                                <button
+                                                    onClick={() => fileInputRef.current?.click()}
+                                                    disabled={uploading}
+                                                    className="p-3 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    title="Attach file"
+                                                >
+                                                    <Link size={17} />
+                                                </button>
+                                                <input
+                                                    className="flex-1 p-4 pl-5 rounded-xl outline-none text-sm transition-all placeholder-gray-500 bg-white/5 border border-white/5 text-gray-200 focus:border-primary/50 focus:bg-white/10 focus:shadow-[0_0_15px_rgba(6,182,212,0.1)]"
+                                                    placeholder="Send a request message..."
+                                                    onChange={typingHandler}
+                                                    value={newMessage}
+                                                    onKeyDown={sendMessage}
+                                                    disabled={uploading}
+                                                />
+                                                <button
+                                                    onClick={(e) => sendMessage(null)}
+                                                    disabled={uploading || !newMessage}
+                                                    className="p-3 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-white transition-colors shadow-lg shadow-cyan-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                >
+                                                    <Send size={17} className="text-white" />
+                                                </button>
+                                            </div>
+                                        )
+                                    ) : (
+                                        <div className="flex flex-col items-center gap-4 p-6 bg-white/5 border border-white/10 rounded-xl">
+                                            <p className="text-white text-lg font-semibold">Accept Chat Request?</p>
+                                            <p className="text-gray-400 text-sm text-center">
+                                                {getSender(user, selectedChat.users)} wants to send you a message.
+                                            </p>
+                                            <div className="flex gap-4 w-full max-w-xs">
+                                                <button
+                                                    onClick={async () => {
+                                                        try {
+                                                            const config = {
+                                                                headers: { Authorization: `Bearer ${user.token}` },
+                                                            };
+                                                            await axios.put("/api/chat/reject", { chatId: selectedChat._id }, config);
+                                                            setSelectedChat("");
+                                                            setFetchAgain(!fetchAgain);
+                                                        } catch (error) {
+                                                            alert("Error rejecting chat");
+                                                        }
+                                                    }}
+                                                    className="flex-1 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg transition-colors border border-red-500/20"
+                                                >
+                                                    Reject
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        try {
+                                                            const config = {
+                                                                headers: { Authorization: `Bearer ${user.token}` },
+                                                            };
+                                                            const { data } = await axios.put("/api/chat/accept", { chatId: selectedChat._id }, config);
+                                                            setSelectedChat(data);
+                                                            setFetchAgain(!fetchAgain);
+                                                        } catch (error) {
+                                                            alert("Error accepting chat");
+                                                        }
+                                                    }}
+                                                    className="flex-1 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors shadow-lg shadow-green-500/30"
+                                                >
+                                                    Accept
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )
+                                ) : (
+                                    <div className="relative flex items-center gap-2 group">
+                                        {/* Hidden file input */}
+                                        <input
+                                            ref={fileInputRef}
+                                            type="file"
+                                            className="hidden"
+                                            onChange={handleFileSelect}
+                                            disabled={uploading}
+                                            accept="image/*,.pdf,.doc,.docx,.txt,.zip,.rar"
+                                        />
+
+                                        {/* Attach file button */}
+                                        <button
+                                            onClick={() => fileInputRef.current?.click()}
+                                            disabled={uploading}
+                                            className="p-3 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                            title="Attach file"
+                                        >
+                                            <Link size={17} />
+                                        </button>
+                                        <input
+                                            className="flex-1 p-4 pl-5 rounded-xl outline-none text-sm transition-all placeholder-gray-500 bg-white/5 border border-white/5 text-gray-200 focus:border-primary/50 focus:bg-white/10 focus:shadow-[0_0_15px_rgba(6,182,212,0.1)]"
+                                            placeholder="Type a message..."
+                                            onChange={typingHandler}
+                                            value={newMessage}
+                                            onKeyDown={sendMessage}
+                                            disabled={uploading}
+                                        />
+                                        <button
+                                            onClick={(e) => sendMessage(null)}
+                                            disabled={uploading || !newMessage}
+                                            className="p-3 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-white transition-colors shadow-lg shadow-cyan-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            <Send size={17} className="text-white" />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>
@@ -367,6 +518,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <VideoCall
                     chatId={selectedChat._id}
                     onClose={() => setIsCallOpen(false)}
+                    isAudioOnly={callType === "audio"}
                 />
             )}
 
@@ -385,7 +537,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
                         <div className="text-center">
                             <h3 className="text-2xl font-bold text-white mb-1">{incomingCall.caller.name}</h3>
-                            <p className="text-cyan-400 animate-pulse">Incoming Video Call...</p>
+                            <p className="text-cyan-400 animate-pulse">Incoming {incomingCall.callType === "audio" ? "Audio" : "Video"} Call...</p>
                         </div>
 
                         <div className="flex gap-4 w-full">
@@ -398,6 +550,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             <button
                                 onClick={() => {
                                     setSelectedChat(incomingCall.chat);
+                                    setCallType(incomingCall.callType);
                                     setIsCallOpen(true);
                                     setIncomingCall(null);
                                 }}

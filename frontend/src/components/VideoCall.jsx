@@ -13,7 +13,7 @@ import '@stream-io/video-react-sdk/dist/css/styles.css';
 import axios from 'axios';
 import { ChatState } from '../context/ChatProvider';
 
-const VideoCall = ({ chatId, onClose, isVideoCall = true }) => {
+const VideoCall = ({ chatId, onClose, isVideoCall = true, isAudioOnly = false }) => {
     const [client, setClient] = useState(null);
     const [call, setCall] = useState(null);
     const { user } = ChatState();
@@ -50,7 +50,13 @@ const VideoCall = ({ chatId, onClose, isVideoCall = true }) => {
                 // 3. Create/Join Call
                 // We use the chatId as the unique call ID so everyone in the chat joins the same call
                 const newCall = newClient.call('default', chatId);
+
+                if (isAudioOnly) {
+                    await newCall.camera.disable();
+                }
+
                 await newCall.join({ create: true });
+
                 setCall(newCall);
 
             } catch (error) {

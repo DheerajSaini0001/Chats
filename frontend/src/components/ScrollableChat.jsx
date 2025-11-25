@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     isLastMessage,
     isSameSender,
@@ -9,13 +9,17 @@ import { ChatState } from "../context/ChatProvider";
 import { motion } from "framer-motion";
 import FileMessage from "./FileMessage";
 
-const ScrollableChat = ({ messages }) => {
+const ScrollableChat = ({ messages, handleDeleteMessage }) => {
     const { user } = ChatState();
+    const [activeMessageId, setActiveMessageId] = useState(null);
 
     return (
         <div className="overflow-x-hidden pb-4">
             {messages &&
                 messages.map((m, i) => {
+                    // If deleted for me, don't render
+                    if (m.deletedBy && m.deletedBy.includes(user._id)) return null;
+
                     const isMyMessage = m.sender._id === user._id;
                     const isSameSenderAsNext =
                         i < messages.length - 1 &&
@@ -72,17 +76,65 @@ const ScrollableChat = ({ messages }) => {
                                 style={{
                                     borderRadius: borderRadius
                                 }}
+                                onMouseLeave={() => setActiveMessageId(null)}
                             >
-                                {/* Display file attachment if exists */}
-                                {m.attachment && (
-                                    <FileMessage attachment={m.attachment} isSender={isMyMessage} />
-                                )}
-
-                                {/* Display text content if exists */}
-                                {m.content && (
-                                    <div className={m.attachment ? "mt-2" : ""}>
-                                        {m.content}
+                                {m.isDeletedForEveryone ? (
+                                    <div className="italic text-sm opacity-70 flex items-center gap-2 text-gray-400">
+                                        <i className="fas fa-ban text-xs"></i> This message was deleted
                                     </div>
+                                ) : (
+                                    <>
+                                        {/* Display file attachment if exists */}
+                                        {m.attachment && (
+                                            <FileMessage attachment={m.attachment} isSender={isMyMessage} />
+                                        )}
+
+                                        {/* Display text content if exists */}
+                                        {m.content && (
+                                            <div className={m.attachment ? "mt-2" : ""}>
+                                                {m.content}
+                                            </div>
+                                        )}
+
+                                        {/* Dropdown Trigger */}
+                                        <button
+                                            className={`absolute top-1 right-1 p-1 rounded text-xs transition-all ${activeMessageId === m._id ? "opacity-100 bg-black/20" : "opacity-0 group-hover:opacity-100 hover:bg-black/20"}`}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setActiveMessageId(activeMessageId === m._id ? null : m._id);
+                                            }}
+                                        >
+                                            <i className="fas fa-ellipsis-v text-white/70"></i>
+                                        </button>
+
+                                        {/* Dropdown Menu */}
+                                        {activeMessageId === m._id && (
+                                            <div className="absolute top-8 right-0 bg-[#1a1a1a] border border-white/10 rounded-lg shadow-xl z-50 w-40 overflow-hidden flex flex-col animate-in fade-in zoom-in duration-200">
+                                                <button
+                                                    className="px-4 py-2 text-left text-sm hover:bg-white/10 text-red-400 transition-colors flex items-center gap-2"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteMessage(m._id, "me");
+                                                        setActiveMessageId(null);
+                                                    }}
+                                                >
+                                                    <i className="fas fa-trash-alt text-xs"></i> Delete for me
+                                                </button>
+                                                {m.sender._id === user._id && (
+                                                    <button
+                                                        className="px-4 py-2 text-left text-sm hover:bg-white/10 text-red-400 transition-colors border-t border-white/5 flex items-center gap-2"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleDeleteMessage(m._id, "everyone");
+                                                            setActiveMessageId(null);
+                                                        }}
+                                                    >
+                                                        <i className="fas fa-globe text-xs"></i> Delete for everyone
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+                                    </>
                                 )}
 
                                 <div className={`text-[10px] mt-1 text-right ${isMyMessage ? "text-cyan-100" : "text-gray-400"}`}>

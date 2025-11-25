@@ -4,6 +4,8 @@ import { ChatState } from "../../context/ChatProvider";
 import axios from "axios";
 import ProfileModal from "./ProfileModal";
 import ThemeToggle from "../ThemeToggle";
+import { Search, CircleDashed } from "lucide-react";
+import StatusDrawer from "./StatusDrawer";
 
 const SideDrawer = () => {
     const [search, setSearch] = useState("");
@@ -12,6 +14,7 @@ const SideDrawer = () => {
     const [loadingChat, setLoadingChat] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isStatusOpen, setIsStatusOpen] = useState(false);
 
     const { user, setSelectedChat, chats, setChats } = ChatState();
     const navigate = useNavigate();
@@ -70,13 +73,23 @@ const SideDrawer = () => {
     return (
         <>
             <div className="flex justify-between items-center w-full p-3 glass-header sticky top-0 z-10">
-                <button
-                    className="flex items-center px-4 py-2 bg-white/10 dark:bg-white/5 rounded-full hover:bg-white/20 dark:hover:bg-white/10 transition-colors duration-200 text-gray-200"
-                    onClick={() => setIsDrawerOpen(true)}
-                >
-                    <i className="fas fa-search text-gray-400"></i>
-                    <span className="hidden md:flex px-2 font-medium">Search User</span>
-                </button>
+                <div className="flex items-center gap-2">
+                    <button
+                        className="flex items-center px-4 py-2 bg-white/10 dark:bg-white/5 rounded-full hover:bg-white/20 dark:hover:bg-white/10 transition-colors duration-200 text-gray-200"
+                        onClick={() => setIsDrawerOpen(true)}
+                    >
+                        <Search size={20} className="text-white" />
+                        <span className="hidden md:flex px-2 font-medium">Search</span>
+                    </button>
+                    <button
+                        className="flex items-center px-4 py-2 bg-white/10 dark:bg-white/5 rounded-full hover:bg-white/20 dark:hover:bg-white/10 transition-colors duration-200 text-gray-200"
+                        onClick={() => setIsStatusOpen(true)}
+                        title="Status"
+                    >
+                        <CircleDashed size={20} className="text-white" />
+                        <span className="hidden md:flex px-2 font-medium">Status</span>
+                    </button>
+                </div>
 
                 <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 tracking-tight cursor-default">
                     Talk-A-Tive
@@ -191,6 +204,9 @@ const SideDrawer = () => {
                     </div>
                 </div>
             )}
+
+            {/* Status Drawer */}
+            <StatusDrawer isOpen={isStatusOpen} onClose={() => setIsStatusOpen(false)} />
 
             {/* Profile Modal */}
             <ProfileModal
