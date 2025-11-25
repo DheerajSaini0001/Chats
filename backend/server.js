@@ -1,23 +1,28 @@
-const express = require("express");
 const dotenv = require("dotenv");
+dotenv.config();
+
+const express = require("express");
+const cors = require("cors");
 const { chats } = require("./data/data");
 const connectDB = require("./config/db");
 const colors = require("colors");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+const streamRoutes = require("./routes/streamRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const path = require("path");
 
-dotenv.config();
 connectDB();
 const app = express();
 
 app.use(express.json()); // to accept json data
+app.use(cors());
 
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
+app.use("/api/stream", streamRoutes);
 
 // --------------------------deployment------------------------------
 
@@ -40,7 +45,7 @@ if (process.env.NODE_ENV === "production") {
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 const server = app.listen(
     PORT,
@@ -50,7 +55,7 @@ const server = app.listen(
 const io = require("socket.io")(server, {
     pingTimeout: 60000,
     cors: {
-        origin: "http://localhost:5173",
+        origin: "http://localhost:5174",
         // credentials: true,
     },
 });
@@ -78,6 +83,18 @@ io.on("connection", (socket) => {
             if (user._id == newMessageRecieved.sender._id) return;
 
             socket.in(user._id).emit("message recieved", newMessageRecieved);
+        });
+    });
+
+    socket.on("call started", (data) => {
+        var chat = data.chat;
+        var caller = data.caller;
+
+        if (!chat.users) return;
+
+        chat.users.forEach((user) => {
+            if (user._id == caller._id) return;
+            socket.in(user._id).emit("incoming call", { chat, caller });
         });
     });
 
