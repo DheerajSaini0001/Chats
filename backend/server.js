@@ -10,6 +10,7 @@ const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const streamRoutes = require("./routes/streamRoutes");
+const statusRoutes = require("./routes/statusRoutes");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const path = require("path");
 
@@ -23,6 +24,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/stream", streamRoutes);
+app.use("/api/status", statusRoutes);
 
 // --------------------------deployment------------------------------
 
@@ -71,8 +73,8 @@ io.on("connection", (socket) => {
         socket.join(room);
         console.log("User Joined Room: " + room);
     });
-    socket.on("typing", (room) => socket.in(room).emit("typing"));
-    socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+    socket.on("typing", (room) => socket.in(room).emit("typing", room));
+    socket.on("stop typing", (room) => socket.in(room).emit("stop typing", room));
 
     socket.on("new message", (newMessageRecieved) => {
         var chat = newMessageRecieved.chat;
@@ -89,12 +91,22 @@ io.on("connection", (socket) => {
     socket.on("call started", (data) => {
         var chat = data.chat;
         var caller = data.caller;
+        var callType = data.callType;
 
         if (!chat.users) return;
 
         chat.users.forEach((user) => {
             if (user._id == caller._id) return;
-            socket.in(user._id).emit("incoming call", { chat, caller });
+            socket.in(user._id).emit("incoming call", { chat, caller, callType });
+        });
+    });
+
+    socket.on("message deleted", (deletedMessage) => {
+        var chat = deletedMessage.chat;
+        if (!chat.users) return;
+        chat.users.forEach((user) => {
+            if (user._id == deletedMessage.sender._id) return;
+            socket.in(user._id).emit("message deleted", deletedMessage);
         });
     });
 

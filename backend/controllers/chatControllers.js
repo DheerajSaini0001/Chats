@@ -35,6 +35,8 @@ const accessChat = asyncHandler(async (req, res) => {
             chatName: "sender",
             isGroupChat: false,
             users: [req.user._id, userId],
+            isAccepted: false,
+            requestedBy: req.user._id,
         };
 
         try {
@@ -98,6 +100,7 @@ const createGroupChat = asyncHandler(async (req, res) => {
             users: users,
             isGroupChat: true,
             groupAdmin: req.user,
+            isAccepted: true, // Group chats are auto-accepted for now
         });
 
         const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
@@ -193,6 +196,44 @@ const addToGroup = asyncHandler(async (req, res) => {
     }
 });
 
+//@description     Accept Chat Request
+//@route           PUT /api/chat/accept
+//@access          Protected
+const acceptChat = asyncHandler(async (req, res) => {
+    const { chatId } = req.body;
+
+    const updatedChat = await Chat.findByIdAndUpdate(
+        chatId,
+        { isAccepted: true },
+        { new: true }
+    )
+        .populate("users", "-password")
+        .populate("latestMessage");
+
+    if (!updatedChat) {
+        res.status(404);
+        throw new Error("Chat Not Found");
+    } else {
+        res.json(updatedChat);
+    }
+});
+
+//@description     Reject Chat Request
+//@route           PUT /api/chat/reject
+//@access          Protected
+const rejectChat = asyncHandler(async (req, res) => {
+    const { chatId } = req.body;
+
+    const deletedChat = await Chat.findByIdAndDelete(chatId);
+
+    if (!deletedChat) {
+        res.status(404);
+        throw new Error("Chat Not Found");
+    } else {
+        res.json({ message: "Chat Rejected/Deleted" });
+    }
+});
+
 module.exports = {
     accessChat,
     fetchChats,
@@ -200,4 +241,6 @@ module.exports = {
     renameGroup,
     addToGroup,
     removeFromGroup,
+    acceptChat,
+    rejectChat,
 };

@@ -15,6 +15,8 @@ const messageSchema = mongoose.Schema(
             },
             default: null,
         },
+        deletedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+        isDeletedForEveryone: { type: Boolean, default: false },
     },
     { timestamps: true }
 );
