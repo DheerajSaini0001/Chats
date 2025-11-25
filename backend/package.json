@@ -1,0 +1,25 @@
+{
+  "name": "mern-chat-backend",
+  "version": "1.0.0",
+  "description": "Real-time chat application backend",
+  "main": "backend/server.js",
+  "scripts": {
+    "dev": "nodemon backend/server.js"
+  },
+  "dependencies": {
+    "@stream-io/node-sdk": "^0.7.21",
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-async-handler": "^1.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.554.0",
+    "mongoose": "^7.6.3",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
